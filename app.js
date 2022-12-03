@@ -6,9 +6,9 @@ const app = express();
 // posts json data
 app.use(express.json());
 
-const PORT = 3000;
-
+////////////////////////// USUARIOS ///////////////////////////////
 // get
+
 app.get("/usuarios", (req, res) => {
   con.query("select * from usuarios", (err, results) => {
     if (err) res.json({ message: err });
@@ -23,9 +23,21 @@ app.get("/usuarios/:id_usuario", (req, res) => {
     req.params.id_usuario,
     function (err, results, fields) {
       if (err) res.json({ message: err });
-      else res.json({ message: results });
+      else {
+        res.json({ message: results });
+        results.forEach((e) => console.log(e.id_usuario));
+      }
     }
   );
+});
+
+// post
+app.post("/usuarios", (req, res) => {
+  const data = req.body;
+  con.query("INSERT INTO usuarios SET?", data, function (err, results, fields) {
+    if (err) res.json({ message: err });
+    else res.json({ results });
+  });
 });
 
 // put
@@ -48,15 +60,6 @@ app.put("/usuarios/:id_usuario", (req, res) => {
   );
 });
 
-// post
-app.post("/usuarios", (req, res) => {
-  const data = req.body;
-  con.query("INSERT INTO usuarios SET?", data, function (err, results, fields) {
-    if (err) res.json({ message: err });
-    else res.json({ results });
-  });
-});
-
 // delete
 app.delete("/usuarios/:id_usuario", (req, res) => {
   con.query(
@@ -68,7 +71,14 @@ app.delete("/usuarios/:id_usuario", (req, res) => {
   );
 });
 
+////////////////////////// ENDEREÇOS ///////////////////////////////
+
+app.get("/enderecos-usuario/:id_usuario", (req, res) => {});
+
+//get
+
 // listen for requests
+const PORT = 3000;
 app.listen(PORT, function () {
   console.log("Listening on port " + PORT);
 });
