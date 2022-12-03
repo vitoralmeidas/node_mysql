@@ -1,40 +1,70 @@
 const express = require("express");
-const app = express();
-const mysql = require("mysql2");
-require("dotenv").config();
+const con = require("./DB/config");
 
-const execQuery = (sqlQuery, res) => {
-  const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "test_back_node",
-    password: process.env.MYSQL_PASS,
-  });
-  connection.query(sqlQuery, (error, results, fields) => {
-    if (error) res.json(error);
-    else res.json(results);
-    connection.end();
-    console.log("Executou!");
-  });
-};
+const app = express();
 
 // posts json data
 app.use(express.json());
 
 const PORT = 3000;
 
-app.get("/", (req, res) => {
-  res.json({ message: "Ok..." });
+// get
+app.get("/usuarios", (req, res) => {
+  con.query("select * from usuarios", (err, results) => {
+    if (err) res.json({ message: err });
+    else res.json({ results });
+  });
 });
 
-app.post("/clientes", (req, res) => {
-  const nome = req.body.nome;
-  const email = req.body.email;
-  const telefone = req.body.telefone;
-  const cpf = req.body.cpf;
-  execQuery(
-    `INSERT INTO usuarios(nome, email, telefone, cpf) VALUES('${nome}', '${email}', '${telefone}', '${cpf}')`,
-    res
+// get by id
+app.get("/usuarios/:id_usuario", (req, res) => {
+  con.query(
+    "SELECT * FROM usuarios WHERE id_usuario = ?",
+    req.params.id_usuario,
+    function (err, results, fields) {
+      if (err) res.json({ message: err });
+      else res.json({ message: results });
+    }
+  );
+});
+
+// put
+app.put("/usuarios/:id_usuario", (req, res) => {
+  const data = [
+    req.body.nome,
+    req.body.email,
+    req.body.telefone,
+    req.body.cpf,
+    req.params.id_usuario,
+  ];
+
+  con.query(
+    "UPDATE usuarios SET nome = ?, email = ?, telefone = ?, cpf = ? WHERE id_usuario = ?",
+    data,
+    function (err, results, fields) {
+      if (err) res.json({ message: err });
+      else res.json({ results });
+    }
+  );
+});
+
+// post
+app.post("/usuarios", (req, res) => {
+  const data = req.body;
+  con.query("INSERT INTO usuarios SET?", data, function (err, results, fields) {
+    if (err) res.json({ message: err });
+    else res.json({ results });
+  });
+});
+
+// delete
+app.delete("/usuarios/:id_usuario", (req, res) => {
+  con.query(
+    "DELETE FROM usuarios WHERE id_usuario =" + req.params.id_usuario,
+    function (err, results, fields) {
+      if (err) res.json({ message: err });
+      else res.json({ results });
+    }
   );
 });
 
