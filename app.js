@@ -11,8 +11,15 @@ app.use(express.json());
 
 app.get("/usuarios", (req, res) => {
   con.query("select * from usuarios", (err, results) => {
-    if (err) res.json({ message: err });
-    else res.json({ results });
+    if (err) res.json({ codigo: 400, messagem: "erro" });
+    else {
+      res.json({
+        codigo: 200,
+        status: "sucesso",
+        mensagem: "Ação Realizada com sucesso",
+        dados: [results],
+      });
+    }
   });
 });
 
@@ -22,10 +29,14 @@ app.get("/usuarios/:id_usuario", (req, res) => {
     "SELECT * FROM usuarios WHERE id_usuario = ?",
     req.params.id_usuario,
     function (err, results, fields) {
-      if (err) res.json({ message: err });
+      if (err) res.json({ codigo: 400, messagem: "erro" });
       else {
-        res.json({ message: results });
-        results.forEach((e) => console.log(e.id_usuario));
+        res.json({
+          codigo: 200,
+          status: "sucesso",
+          mensagem: "Ação Realizada com sucesso",
+          dados: [results],
+        });
       }
     }
   );
@@ -35,7 +46,7 @@ app.get("/usuarios/:id_usuario", (req, res) => {
 app.post("/usuarios", (req, res) => {
   const data = req.body;
   con.query("INSERT INTO usuarios SET?", data, function (err, results, fields) {
-    if (err) res.json({ message: err });
+    if (err) res.json({ codigo: 400, messagem: "erro" });
     else res.json({ results });
   });
 });
@@ -54,8 +65,15 @@ app.put("/usuarios/:id_usuario", (req, res) => {
     "UPDATE usuarios SET nome = ?, email = ?, telefone = ?, cpf = ? WHERE id_usuario = ?",
     data,
     function (err, results, fields) {
-      if (err) res.json({ message: err });
-      else res.json({ results });
+      if (err) res.json({ codigo: 400, messagem: "erro" });
+      else {
+        res.json({
+          codigo: 200,
+          status: "sucesso",
+          mensagem: "Ação Realizada com sucesso",
+          dados: [data],
+        });
+      }
     }
   );
 });
@@ -65,8 +83,15 @@ app.delete("/usuarios/:id_usuario", (req, res) => {
   con.query(
     "DELETE FROM usuarios WHERE id_usuario =" + req.params.id_usuario,
     function (err, results, fields) {
-      if (err) res.json({ message: err });
-      else res.json({ results });
+      if (err) res.json({ codigo: 400, messagem: "erro" });
+      else {
+        res.json({
+          codigo: 200,
+          status: "sucesso",
+          mensagem: "Ação Realizada com sucesso",
+          dados: [results],
+        });
+      }
     }
   );
 });
@@ -79,8 +104,15 @@ app.get("/enderecos-usuario/:id_usuario", (req, res) => {
     "SELECT * FROM endereco_usuario WHERE id_usuario = ?",
     req.params.id_usuario,
     function (err, results, fields) {
-      if (err) res.json({ message: err });
-      else res.json({ results });
+      if (err) res.json({ codigo: 400, messagem: "erro" });
+      else {
+        res.json({
+          codigo: 200,
+          status: "sucesso",
+          mensagem: "Ação Realizada com sucesso",
+          dados: [results],
+        });
+      }
     }
   );
 });
@@ -92,7 +124,14 @@ app.get("/enderecos-usuario/:id_endereco_usuario", (req, res) => {
     req.params.id_endereco_usuario,
     function (err, results) {
       if (err) res.json({ err });
-      else res.json({ results });
+      else {
+        res.json({
+          codigo: 200,
+          status: "sucesso",
+          mensagem: "Ação Realizada com sucesso",
+          dados: [results],
+        });
+      }
     }
   );
 });
@@ -100,14 +139,16 @@ app.get("/enderecos-usuario/:id_endereco_usuario", (req, res) => {
 // post new address
 app.post("/enderecos-usuario/", (req, res) => {
   const data = req.body;
-  con.query(
-    "INSERT INTO endereco_usuario SET ?",
-    data,
-    function (err, results) {
-      if (err) res.json({ err });
-      else res.json({ results });
-    }
-  );
+  con.query("INSERT INTO endereco_usuario SET ?", data, function (err, rows) {
+    if (err) res.json({ err });
+    else
+      res.json({
+        codigo: 200,
+        status: "sucesso",
+        mensagem: "Ação Realizada com sucesso",
+        dados: [data],
+      });
+  });
 });
 
 // put
@@ -128,7 +169,14 @@ app.put("/enderecos-usuario/:id_endereco_usuario", (req, res) => {
     data,
     function (err, results, fields) {
       if (err) res.json({ err });
-      else res.json({ results });
+      else {
+        res.json({
+          codigo: 200,
+          status: "sucesso",
+          mensagem: "Ação Realizada com sucesso",
+          dados: [data],
+        });
+      }
     }
   );
 });
@@ -139,8 +187,15 @@ app.delete("/enderecos-usuario/:id_endereco_usuario", (req, res) => {
     "DELETE FROM endereco_usuario WHERE id_endereco_usuario = " +
       req.params.id_endereco_usuario,
     function (err, results) {
-      if (err) res.json({ err });
-      else res.json({ results });
+      if (err) res.json({ codigo: 400, messagem: "erro" });
+      else {
+        res.json({
+          codigo: 200,
+          status: "sucesso",
+          mensagem: "Ação Realizada com sucesso",
+          dados: [results],
+        });
+      }
     }
   );
 });
